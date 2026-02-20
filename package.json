@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "@observablehq/notebook-kit": "^1.5.0"
+  },
+  "scripts": {
+    "preview": "notebooks preview --root docs --template docs/nochrome.tmpl",
+    "build": "notebooks build --root docs --out ../dist --template docs/nochrome.tmpl -- docs/*.html",
+    "download": "notebooks download https://observablehq.com/@shadoof/passengers-dev > docs:passengers-dev.html"
+  }
+}

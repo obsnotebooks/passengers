@@ -1,0 +1,1119 @@
+<!doctype html>
+<notebook theme="air">
+  <title>Untitled</title>
+  <script id="1" type="text/markdown" hidden="">
+    # Passengers
+
+    This is a test paragraph to see if markdown is rendering properly.
+
+    - List item 1
+    - List item 2
+  </script>
+  <script id="2" type="application/vnd.observable.javascript">
+    display = html`<div id="line">${lineLetters}</div>`;
+  </script>
+  <script id="3" type="application/vnd.observable.javascript" hidden="">
+    morph = {
+      // return "not running";
+      let transformIndex = 0;
+      let fromBeginning = true; // if true, starts with Passengers English
+      // NOT the way to go:
+      // document.addEventListener("keydown", (event) => {
+      //   if (event.altKey) {
+      //     console.log(`Alt or Option key down`);
+      //     fromBeginning = true;
+      //   }
+      // });
+      let cycle, lineIdx;
+      if (fromBeginning) {
+        cycle = 0;
+        lineIdx = 0;
+        state.laps = 0;
+      } else {
+        cycle = randInt(3);
+        // make spinTo a less and thus a more evenly likely entry point:
+        cycle = cycle == 2 && randInt(2) == 0 ? randInt(2) : cycle;
+        lineIdx = randInt(lines.length);
+        state.laps = cycle < 2 ? cycle : 0;
+      }
+      yield `setting off with cycle: ${cycle}, on lap: ${state.laps}, line: ${lineIdx}`;
+      document.getElementById("line").innerHTML = lineLetters("");
+      await delay(5000);
+      console.log(
+        `setting off with cycle: ${cycle}, on lap: ${state.laps}, line: ${lineIdx}`
+      );
+      if (cycle < 2) {
+        let whichSpin = randInt(2) == 0 ? true : false;
+        await spinTo(lines[lineIdx], whichSpin, 500);
+      }
+      await delay(5000);
+      // always wait briefly
+      let start = Date.now();
+      while (state.laps < config.howManyLaps || config.loopForever) {
+        for (cycle; cycle < 2; cycle++) {
+          // the following seems like a bit of a hack:
+          // but gives us an articular per lap reset
+          let modelLines = [], shuffled = "";
+          if (state.laps > 0) {
+            modelLines = shuffle(lines.slice());
+            shuffled = "shuffled";
+            config.showLetter = 400;
+            config.xFade = 240;
+          } else {
+            modelLines = lines.slice();
+            shuffled = "not shuffled";
+          }
+          let lns = modelLines.slice();
+          for (lineIdx; lineIdx < lns.length; lineIdx++) {
+            let nextIdx = (lineIdx + 1) % lns.length;
+            state.modelLine = modelLines[lineIdx];
+            // speed variations
+            if (state.laps > 0) {
+              switch (lineIdx) {
+                case 2:
+                  config.showNums = 500;
+                  config.xFade = 500;
+                  break;
+                case 4:
+                  config.showNums = 150;
+                  config.xFade = 60;
+                  break;
+                case 8:
+                  config.showNums = 500;
+                  config.xFade = 500;
+                  break;
+                case 9:
+                  config.showNums = 150;
+                  config.xFade = 60;
+                  break;
+                case 12:
+                  config.showNums = 500;
+                  config.xFade = 500;
+                  break;
+                case 13:
+                  config.showNums = 150;
+                  config.xFade = 60;
+                  break;
+                case 15:
+                  config.showNums = 500;
+                  config.xFade = 500;
+                  break;
+                case 16:
+                  config.showNums = 150;
+                  config.xFade = 60;
+                  break;
+                default:
+                    config.showNums = 400;
+                    config.xFade = 250;
+              }
+            } else {
+              switch (lineIdx) {
+                case 3:
+                  config.showNums = 375;
+                  config.xFade = 250;
+                  break;
+                case 6:
+                  config.showNums = 500;
+                  config.xFade = 500;
+                  break;
+                case 8:
+                  config.showNums = 375;
+                  config.xFade = 250;
+                  break;
+                case 9:
+                  config.showNums = 500;
+                  config.xFade = 500;
+                  break;
+                case 12:
+                  config.showNums = 375;
+                  config.xFade = 250;
+                  break;
+                case 15:
+                  config.showNums = 375;
+                  config.xFade = 250;
+                  break;
+                default:
+                  config.showNums = 150;
+                  config.xFade = 60;
+              }
+            } 
+            await toNums();
+            await delay(config.showNums * 2);
+
+            // decide whether to redact
+            // get all matches for possible redaction
+            // we will switch based on a redaction phase calculated from lineIdx
+            let phase = Math.floor(lineIdx / (lns.length / config.phases.length));
+            if (true || state.laps % 2 == 0) { // even lap: no redaction
+              // format elapsed milliseconds as MM:SS for clearer display
+              let _elapsedMs = Date.now() - start;
+              let _mins = Math.floor(_elapsedMs / 60000);
+              let _secs = Math.floor((_elapsedMs % 60000) / 1000);
+              let _elapsedFmt = String(_mins).padStart(2, "0") + ":" + String(_secs).padStart(2, "0");
+              console.log(
+                `lap: ${state.laps} (no redaction), lines: ${lineIdx} & ${nextIdx}, ${shuffled}, ${_elapsedFmt}`
+              );
+              yield `lap: ${state.laps} (no redaction), lines: ${lineIdx} & ${nextIdx}, ${shuffled}, ${_elapsedFmt}`;
+              phase = -1;
+            } else {
+              console.log(
+                `laps: ${state.laps} odd: redacting, phase ${phase}: ${config.phases[phase]}, lines: ${lineIdx} & ${nextIdx}, ${shuffled}`
+              );
+              yield `laps: ${state.laps} odd: redacting, phase ${phase}: ${config.phases[phase]}, lines: ${lineIdx} & ${nextIdx}, ${shuffled}`;
+            }
+            let match;
+            switch (phase) {
+              case 0: // A -> redact
+                match = new RegExp(/[aAɑ]/, "g");
+                lns[nextIdx] = redact(lns[nextIdx], match);
+                break;
+              case 1: // all vowels ->redact
+                match = vowelsMatch;
+                lns[nextIdx] = redactAll(lns[nextIdx], match);
+                break;
+              case 2: // all letters -> redact
+                match = new RegExp("[" + transThru + "]", "g");
+                lns[nextIdx] = redactAll(lns[nextIdx], match);
+                break;
+              case 3: // vowels -> " " otherwise -> redact
+                match = vowelsMatch;
+                lns[nextIdx] = redactAll(lns[nextIdx], match, " ");
+                match = consonantsMatch;
+                lns[nextIdx] = redactAll(lns[nextIdx], match);
+                break;
+              case 4: // all -> " "
+                match = new RegExp("[" + transThru + "]", "g");
+                lns[nextIdx] = redactFinal(lns[nextIdx], match, " ");
+                break;
+              default:
+            }
+            // choose and annotate transform
+            state.transform = config.transforms[transformIndex];
+            transformIndex = ++transformIndex % config.transforms.length;
+            // the following is a bit of a hack:
+            if (state.transform == "resolveL2R") {
+              state.transform = "spinTo";
+              state.resolveL2R = true;
+            } else state.resolveL2R = false;
+            // invoke chosen transform
+            switch (state.transform) {
+              case "spinTo":
+                // can be with config.resolveL2R as either true or false
+                await spinTo(lns[nextIdx]);
+                break;
+              // NOT USED:
+              case "toPhrase":
+                await toPhrase(lns[nextIdx]);
+                break;
+              // NOT USED:
+              case "textMorph":
+                await textMorph(lns[nextIdx]);
+            }
+            await delay(config.showLine);
+            //
+            // } // if using toSpecials
+            //
+            info(`Line ${lineIdx}: ${lns[nextIdx]}`, true);
+          } // end loop through lines
+          lineIdx = 0;
+          state.laps = (state.laps + 1) % 2; // for the slowing down version
+          info(`Lap count: ${state.laps}`, true);
+        } // cycle loop
+        // spinTo
+        console.log(`spinning to ...`);
+        yield `spinning to ...`;
+        let theLine = lines[0];
+        let spinFor = 13 * 1000;
+        let whichSpin = randInt(2) == 0 ? true : false;
+        await spinTo(theLine, whichSpin, spinFor);
+        await delay(3 * 1000);
+        if (state.laps < 1) break;
+        cycle = 0;
+        state.laps = 0;
+        lineIdx = 0;
+      } // end while
+      console.log("Done");
+    }
+  </script>
+  <script id="4" type="text/markdown" hidden="">
+    **Caroline**: Demo‘ing a redaction sequence which would normally start *after* lap `0` (after an initial, no-redaction lap). In the (grey area of the) cell below, change `1` to `0` and click the blue ‘play' button in order to see the non-redacted first lap. It is best, also, to refresh the notebook web page after clicking ‘play’. (‘Play’ = evaluate the current cell so as to register and use any new values.) Refresh is also the best way to start over.<br>
+
+    For demo purposes, with `state.laps = 1` you will see a progressively redacted *shuffled* selection of ten lines from the collected data. (Note that if `state.laps = 0` the lines are *not* shuffled.) You’ll see two lines animated in each of five redaction ‘phases’, equally distributed over the selection of ten lines. These are:
+    1. random 'A/a' -> redact character
+    2. vowels -> redact
+    3. all letters -> redact
+    4. vowels -> redact, otherwise -> '&nbsp; ' (space)
+    5. all letters -> '&nbsp; ' (space)
+
+    The light blue text above gives an indication of what is going on at the time.
+
+    Clearly, you will be able to conceive of other principles for redaction and/or more phases and/or non-equal distribution of phrases across the sequences of lines. The choice is *yours*.
+  </script>
+  <script id="5" type="text/markdown" hidden="">
+    ### Variables
+  </script>
+  <script id="6" type="application/vnd.observable.javascript" hidden="">
+    // times in milliseconds:
+    config = ({
+      background: "rgb(45,45,45)",
+      center: true,
+      fromBeginning: false,
+      howManyLaps: 99,
+      loopForever: false,
+      phases: [
+        "random A -> redact",
+        "vowels -> redact",
+        "all -> redact",
+        "vowels -> ' ' otherwise -> redact",
+        "all -> ' '"
+      ],
+      redactChar: "—", // ◻
+      resolveL2R: true,
+      shadowExtent: ".75ch", // 1ch
+      shadowOpacity: 1,
+      shadowRGB: "160,64,255",
+      showLetter: 150, // default 150
+      showLine: 3000,
+      showNums: 350,
+      transforms: ["resolveL2R", "spinTo"],
+      withSpaces: true,
+      xFade: 60 // default is 60; set to 140 if resolveL2R is false; 20 if true
+    })
+    // specials CBBox:◻ ☐□�▮▯█⌧▉▋■∅␥ from Noto: ⎕ □ ▯ ⍁ ⌷ ❚
+  </script>
+  <script id="7" type="application/vnd.observable.javascript" hidden="">
+    state = ({
+      firstLine: 0,
+      laps: 1,
+      modelLine: "",
+      resolveL2R: true,
+      transform: "spinTo"
+    })
+  </script>
+  <script id="8" type="text/markdown" hidden="">
+    ### TODO
+    - ~~final redaction leaves one letter and one m-dash~~ √
+    - ~~two-lap + toSpin cycle: first lap, no redaction; second lap, progressive, as agreed~~ √
+    - ~~add toSpin effect for some time 2 mins? at end of cycle, before resumption~~
+    - ~~fresh page enters the piece at a random lap and phase and continues for the cycle~~ √
+    - optional command to start the piece from the beginning
+    - ~~email to orange~~
+    - ~~check final data with Caroline, esp. ‘pollinators ...’~~
+    - ~~at end of toNums, when spinning stops, show letters from the actual line!~~ √
+    - ~~make sure orange has version that also counts ‘i’ as vowel~~: will be FIXED
+    - ~~add a new redaction phase so that display settles on all letters redacted at some point~~ √
+    - ~~fix or alert orange to bug preventing the piece from looping properly~~: FIXED
+    - ~~experiment with shuffled order for lines per lap~~ √
+  </script>
+  <script id="9" type="application/vnd.observable.javascript" hidden="">
+    ALPHA_LOOP = {
+      return " " + transThru;
+    }
+    // let al = " ";
+      // let letters = transThru; // Array.from(transThru).join("");
+      // for (let i = 0; i < letters.length; i++) {
+      //   if (i < 8 && !config.fromNums) {
+      //     al += letters[i] + numCodesStr[i];
+      //   } else {
+      //     al += letters[i];
+      //     // 'normalization' using the other digits for frequent letters not in 'ENGL. ROOT'
+      //     if (letters[i] == "D" && !config.fromNums) al += "8";
+      //     if (letters[i] == "I" && !config.fromNums) al += "9";
+      //   }
+      // }
+      // return al; // " P0A1S2E3N4G5R6W7V8I9Ja"
+
+  </script>
+  <script id="10" type="application/vnd.observable.javascript" hidden="">
+    basicColors = [
+      `rgba(128,128,255,${config.shadowOpacity})` // adjust
+      // `rgba(255,0,0,${config.shadowOpacity})`, // red
+      // `rgba(255,128,0,${config.shadowOpacity})`, // orange
+      // `rgba(255,255,0,${config.shadowOpacity})`, // yellow
+      // `rgba(0,255,0,${config.shadowOpacity})`, // (lime) green
+      // `rgba(0,0,255,${config.shadowOpacity})`, // blue
+      // `rgba(128,0,128,${config.shadowOpacity})`, // purple
+      // `rgba(255,0,255,${config.shadowOpacity})` // fuchsia
+    ]
+    // [
+    //   "red",
+    //   "orange",
+    //   "yellow",
+    //   "lime",
+    //   "green",
+    //   "teal",
+    //   "blue",
+    //   "navy",
+    //   "fuchsia",
+    //   "purple"
+    // ] // but not:   "black", "silver", "gray", "white", "olive", "aqua", "maroon",
+  </script>
+  <script id="11" type="application/vnd.observable.javascript" hidden="">
+    csv = `ENGL_ROOT,P,A,S,S,E,N,G,E,R,S,,,W,E,,A,R,E,,,,,P,A,S,S,A,G,E,S,,,W,E,,A,R,E,,,
+    GALICIAN,P,A,S,A,X,E,I,R,A,S,,,S,O,M,O,S,,,,,,S,O,M,O,S,,,,,,P,A,S,A,X,E,S,,
+    PORTUGUESE,P,A,S,S,A,G,E,I,R,O,S,,S,O,M,O,S,,,,,,P,A,S,S,A,G,E,N,S,,S,O,M,O,S,,,,
+    SICILIAN,P,A,S,S,A,G,G,E,R,I,,,S,E,M,U,,,,,,,P,A,S,S,A,G,G,I,,,S,E,M,U,,,,,
+    ROMANSH,P,A,S,S,A,G,E,R,S,,,,E,J,N,A,,,,,,,P,A,S,S,A,G,I,E,S,,E,J,N,A,,,,,
+    ARABIC_BILINGUAL,3,A,B,B,A,R,A,T,O,N,,N,A,7,N,U,,W,A,,N,A,7,N,U,,A,L,,M,A,3,B,A,R,U,,,,,
+    FARSI_TRANSLIT,M,A,,H,A,M,S,A,F,A,R,I,M,,M,A,,D,A,R,,R,A,H,I,M,,,,M,A,,H,A,S,T,I,M,,,
+    PROVENCAL,S,I,A,N,,D,E,,P,A,S,S,A,G,I,É,,,,,,,S,I,A,N,,D,E,,P,A,S,S,A,G,E,,,,
+    OCCITAN,S,E,M,,,,,,P,A,S,S,A,G,I,E,S,,,,,,S,E,M,,,,,,P,A,S,S,A,G,E,S,,,
+    BUMBLEBEE,P,O,L,L,I,N,A,T,O,R,S,,,,,,,,,,,,,P,O,L,L,I,N,A,T,I,N,G,,,,,,,,
+    PHONETICS,p,ɑ,s,n,ʤ,ɛ,z,,,,,,w,i:,,ɑ:,,,,,,,p,ɑ,s,ə,ʤ,ɛ,z,,,,w,i:,,ɑ:,,,,,
+    ICELANDIC,F,E,R,Ð,A,L,A,N,G,A,R,,V,I,Ð,,E,R,U,M,,,S,M,U,G,A,,,,,,V,I,Ð,,E,R,U,M,
+    WELSH,T,E,I,T,H,W,Y,R,,,,,Y,D,Y,N,,N,I,,,,H,Y,N,T,I,A,U,,,,Y,D,Y,N,,N,I,,
+    ANGLO_SAXON,S,C,R,I,Þ,E,N,D,E,,,,B,E,O,Ð,,W,E,,,,S,C,R,I,Þ,A,S,,,,W,E,,B,E,O,Ð,,
+    CZECH,C,E,S,T,O,V,A,T,E,L,I,,J,S,M,E,,,,,,,C,E,S,T,O,U,,,,,J,S,M,E,,,,,
+    KALAALLISUT,A,N,G,A,L,A,Q,A,T,A,A,V,U,G,U,T,,,,,,,A,N,G,A,L,A,F,F,I,U,V,U,G,U,T,,,,
+    TRANS,P,X,S,S,A,G,E,O,R,E,S,,W,E,,H,X,L,D,E,N,,P,X,S,S,A,G,I,S,,,W,E,,H,X,L,D,E,N
+    FLORA,P,O,L,L,I,N,A,T,E,D,,,P,O,L,L,I,N,A,T,I,N,G`
+    // from Oct 24 spreadsheet version
+  </script>
+  <script id="12" type="application/vnd.observable.javascript" hidden="">
+    mutable colorIndex = 0
+  </script>
+  <script id="13" type="application/vnd.observable.javascript" hidden="">
+    // should be 0 initially; can be set to 1 for debugging redaction phases
+    mutable laps = 1
+  </script>
+  <script id="14" type="application/vnd.observable.javascript" hidden="">
+    // lineLettersReact = {
+    //   let len = 0;
+    //   lines.forEach((line) => (len = line.length > len ? line.length : len));
+    //   let template = ``;
+    //   for (let i = 0; i < len; i++) {
+    //     let char = " ";
+    //     // if (i < line.length) char = line[i];
+    //     template += `<span id="text${i}">`;
+    //     template += `<span class="text invisible" style="left: calc(1ch * ${
+    //       i + 1
+    //     });">${char}</span>`;
+    //     template += `<span class="text visible" style="left: calc(1ch * ${
+    //       i + 1
+    //     });">${char}</span>`;
+    //     template += `</span>`;
+    //   }
+    //   return template;
+    // }
+  </script>
+  <script id="15" type="application/vnd.observable.javascript" hidden="">
+    lineLetters = (line = lines[0]) => {
+      let len = 0;
+      lines.forEach((line) => (len = line.length > len ? line.length : len));
+      let template = ``;
+      for (let i = 0; i < len; i++) {
+        let char = " ";
+        if (i < line.length) char = line[i];
+        template += `<span id="text${i}">`;
+        template += `<span class="text invisible" style="left: calc(1ch * ${
+          i + 1
+        });">${char}</span>`;
+        template += `<span class="text visible" style="left: calc(1ch * ${
+          i + 1
+        });">${char}</span>`;
+        template += `</span>`;
+      }
+      return template;
+    }
+  </script>
+  <script id="16" type="application/vnd.observable.javascript" hidden="">
+    lines = csvLines()
+  </script>
+  <script id="17" type="text/markdown" hidden="">
+    [ Match-related ]
+  </script>
+  <script id="18" type="application/vnd.observable.javascript" hidden="">
+    allMatch = new RegExp("[" + transThru + "]", "g")
+  </script>
+  <script id="19" type="application/vnd.observable.javascript" hidden="">
+    consonants = transThru.replaceAll(vowelsMatch, "")
+  </script>
+  <script id="20" type="application/vnd.observable.javascript" hidden="">
+    consonantsMatch = new RegExp("[" + consonants + "]", "g")
+  </script>
+  <script id="21" type="application/vnd.observable.javascript" hidden="">
+    vowels = "ɑeiouAEIOU⍺ɛ3ÉəXx"
+  </script>
+  <script id="22" type="application/vnd.observable.javascript" hidden="">
+    vowelsMatch = new RegExp("[" + vowels + "]", "g")
+  </script>
+  <script id="23" type="application/vnd.observable.javascript" hidden="">
+    maxSteps = Math.ceil(ALPHA_LOOP.length / 2)
+  </script>
+  <script id="24" type="application/vnd.observable.javascript" hidden="">
+    numCodesStr = {
+      let digits = "9453267018"; // 0123456789
+      let s = "";
+      for (let i = 0; i < transThru.length; ++i) {
+        s += digits[i % 10];
+      }
+      let r = transThru.indexOf(config.redactChar);
+      // s = s.substr(0, r) + "4" + s.substr(r + 1); // JHC easter egg, ensure redactChar numCode is always "4"
+      return (" " + s).split("");
+    } // "0123456789012345678901234567890123456789 " // or "94534680712 "
+  </script>
+  <script id="25" type="application/vnd.observable.javascript" hidden="">
+    specials = "◻☐�▮▯█⌧▉▋"
+  </script>
+  <script id="26" type="application/vnd.observable.javascript" hidden="">
+    spinning = {
+      let a = new Array(csvLines(0)[0].length);
+      a.fill(false);
+      return a;
+    }
+  </script>
+  <script id="27" type="application/vnd.observable.javascript" hidden="">
+    transThru = {
+      // uniqueLetters(lines)
+      let unfiltered = Array.from(uniqueLetters(lines)).join("");
+      let caps = "∞ABCDEFGHIJKLMNOPQRSTUVWXYZÞᛔᚨᛊᚾᴪ⍺∞◻"; // "liminal/non-settling signs": ◻, ᛔ,ᚨ,ᛊ,ᚾ,ᴪ,ᛔ,ᚨ,ᛊ
+      let tt = unfiltered; // .substr(0, 8) + "" + unfiltered.substr(8);
+      for (let i = 0; i < caps.length; ++i) {
+        if (!tt.includes(caps[i])) tt += caps[i];
+      }
+      return tt;
+      // let tt = "";
+      // for (let i = 0; i < unfiltered.length; ++i) {
+      //   if (!specials.includes(unfiltered[i])) tt += unfiltered[i];
+      // }
+      // tt += config.redactChar; // CB: redaction square should not be in this string
+      // the following insured that ENGL. phrase has 0-7 codes assigned as CB wanted; shuffles other letters
+      // let shuffledtt = tt.substr(0, 8) + shuffle(Array.from(tt.substr(8))).join("");
+      // return shuffledtt;
+    }
+  </script>
+  <script id="28" type="text/markdown" hidden="">
+    ### Functions
+  </script>
+  <script id="29" type="application/vnd.observable.javascript" hidden="">
+    crossfader = async function (selector = "text", msDelay = config.xFade + 10) {
+      // if only crossfading one letter this function must be passed an id containing a (serial) digit
+      if (/\d/.test(selector)) {
+        // SINGLE LETTER REPLACEMENT
+        let letterElem = document.getElementById(selector);
+        let theElems = letterElem.children;
+        let fadingTo = getElemFrom(theElems, "invisible").innerText;
+        Array.from(theElems).forEach((elem) => {
+          elem.classList.toggle("invisible");
+          elem.classList.toggle("visible");
+        });
+        await delay(msDelay);
+        getElemFrom(theElems, "invisible").innerHTML = getCharHTML(fadingTo);
+      } else {
+        // ALL class="text" ELEMENTS ARE TOGGLED
+        // grab the values that we are fadingTo:
+        let fadingTo = [];
+        Array.from(
+          document.getElementsByClassName(selector + " invisible")
+        ).forEach((elem) => fadingTo.push(elem.innerText));
+        // toggle the visibility of the selected elements:
+        let theElems = Array.from(document.getElementsByClassName(selector));
+        theElems.forEach((elem) => {
+          elem.classList.toggle("invisible");
+          elem.classList.toggle("visible");
+        });
+        await delay(msDelay);
+        // put the new values in the now invisible elements:
+        Array.from(
+          document.getElementsByClassName(selector + " invisible")
+        ).forEach((elem, index) => (elem.innerHTML = getCharHTML(fadingTo[index])));
+      }
+    }
+  </script>
+  <script id="30" type="application/vnd.observable.javascript" hidden="">
+    csvLines = (data = csv) => {
+      data = csv.split("\n");
+      let lines = [];
+      let maxLen = 0;
+      for (let i = 0; i < data.length; i++) {
+        let line = data[i];
+        if (config.withSpaces) {
+          // if set to false then no spaces between words
+          // otherwise: one space between words and no trailing spaces
+          while (line.indexOf(",,,") != -1) {
+            line = line.replaceAll(",,,", ",,");
+          }
+          if (line.substr(line.length - 2) == ",,")
+            line = line.substr(0, line.length - 2);
+          line = line.replaceAll(",,", ", ,");
+        }
+        lines[i] = line
+          .split(",")
+          .slice(1)
+          .join("");
+        maxLen = lines[i].length > maxLen ? lines[i].length : maxLen;
+      }
+      if (config.center)
+        for (let j = 0; j < lines.length; j++) {
+          let diff = maxLen - lines[j].length;
+          lines[j] = lines[j].padStart(maxLen - Math.ceil(diff / 2), " ");
+          lines[j] = lines[j].padEnd(maxLen, " ");
+        }
+      else
+        lines.forEach((line, index) => (lines[index] = line.padEnd(maxLen, " ")));
+      return lines;
+    }
+  </script>
+  <script id="31" type="application/vnd.observable.javascript" hidden="">
+    currentlyVisible = (elems) => {
+      let s = "";
+      for (const elem of elems) {
+        s += getElemFrom(elem.children, "visible").innerText;
+      }
+      return s;
+    }
+  </script>
+  <script id="32" type="application/vnd.observable.javascript" hidden="">
+    getCharHTML = (char) => (char == config.redactChar ? `${char}` : char)
+    // could be used to add styling HTML to particular characters,
+    // e.g. redactChar <span class="redact">${char}</span>
+  </script>
+  <script id="33" type="application/vnd.observable.javascript" hidden="">
+    getElemFrom = (collection, visibility) => {
+      return collection[0].classList.contains(visibility)
+        ? collection[0]
+        : collection[1];
+    }
+  </script>
+  <script id="34" type="application/vnd.observable.javascript" hidden="">
+    getNextChar = async (
+      dchar,
+      ochar,
+      stepsLeft,
+      a = ALPHA_LOOP,
+      maxSteps = Math.ceil(ALPHA_LOOP.length / 2)
+    ) => {
+      let step = 1,
+        nchar = "";
+      if (ochar == " " && dchar == " ") {
+        info(`shared space char`);
+        return nchar; // do not mess with shared spaces
+      }
+      let ondx = a.indexOf(ochar); // index of origin char in alpha loop
+      if (ondx < 0) throw "original character not in alpha loop"; // shouldn't happen
+      let nndx = ondx; // so that the index of the next character can progress
+      let dndx = a.indexOf(dchar); // index of destination char
+      let distance = dndx - ondx;
+      if (distance == 0) {
+        info(`-- reached dchar: ${ochar} --`);
+        return null;
+      }
+      let absDistance = Math.abs(distance);
+      if (distance > 0) {
+        step = absDistance <= maxSteps ? 1 : -1;
+        if (step < 0) absDistance = a.length - dndx + ondx;
+      } else {
+        step = absDistance <= maxSteps ? -1 : 1;
+        if (step > 0) absDistance = a.length - ondx + dndx;
+      }
+      if (
+        stepsLeft >= absDistance &&
+        heads() &&
+        stepsLeft < Math.floor(maxSteps / 6)
+      ) {
+        await delay(config.xFade);
+        info(`@getNextChar no change continue`);
+        return null;
+      }
+      nndx = mod(nndx + step, a.length); // uses a mod function that handles negative ints
+      nchar = a[nndx]; // .substr(nndx, 1);
+      info(
+        `from: ${ochar} to: ${dchar} nchar: ${nchar} abs: ${absDistance}, stepsLeft: ${stepsLeft} step: ${step}`
+      );
+      return nchar;
+    }
+  </script>
+  <script id="35" type="application/vnd.observable.javascript" hidden="">
+    info = (msg, showInfo = false) => {
+      if (showInfo) console.log(`[INFO] ${msg}`);
+    }
+  </script>
+  <script id="36" type="application/vnd.observable.javascript" hidden="">
+    redact = (line, match, redactChar = config.redactChar) => {
+      let redactables = Array.from(line.matchAll(match));
+      if (redactables.length < 1) return line;
+      let rmatch = redactables[randInt(redactables.length)];
+      return replaceAt(line, rmatch.index, redactChar);
+    }
+  </script>
+  <script id="37" type="application/vnd.observable.javascript" hidden="">
+    redactAll = (line, match, redactChar = config.redactChar) => {
+      let redactables = Array.from(line.matchAll(match));
+      if (redactables.length < 1) return line;
+      redactables.forEach(
+        (rmatch) => (line = replaceAt(line, rmatch.index, redactChar))
+      );
+      return line;
+    }
+  </script>
+  <script id="38" type="application/vnd.observable.javascript" hidden="">
+    redactFinal = (line, match, redactChar = config.redactChar) => {
+      let redactables = Array.from(line.matchAll(match));
+      if (redactables.length < 1) return line;
+      let overrideRedact = randInt(redactables.length);
+      let overrideChar = randInt(redactables.length);
+      while (overrideChar == overrideRedact && redactables[overrideChar][0] != " ")
+        overrideChar = randInt(redactables.length);
+      // redactables.forEach(
+      //   (rmatch) => (line = replaceAt(line, rmatch.index, redactChar))
+      // );
+      for (let idx = 0; idx < redactables.length; ++idx) {
+        if (idx == overrideChar) continue;
+        if (idx == overrideRedact)
+          line = replaceAt(line, redactables[idx].index, config.redactChar);
+        else line = replaceAt(line, redactables[idx].index, redactChar);
+      }
+      return line;
+    }
+  </script>
+  <script id="39" type="application/vnd.observable.javascript" hidden="">
+    replaceAt = (str, idx, rep) => {
+      return str.substr(0, idx) + rep + str.substr(idx + 1);
+    }
+  </script>
+  <script id="40" type="application/vnd.observable.javascript" hidden="">
+    shadowColor = () => {
+      let sheets = document.styleSheets;
+      let sheet;
+      for (sheet of sheets) {
+        info(`title: ${sheet.title}`);
+        if (sheet.title == "shadows") break;
+      }
+      let rules = sheet.cssRules,
+        rule;
+      for (rule of rules) {
+        info(`rule: ${rule.selectorText} ${rule.selectorText == ".text"}`);
+        if (rule.selectorText == ".text") {
+          rule = rule.style;
+          break;
+        }
+      }
+      mutable colorIndex =
+        mutable colorIndex >= basicColors.length - 1 ? 0 : ++mutable colorIndex;
+      let color = basicColors[mutable colorIndex];
+      // alternative: randElement(basicColors);
+      rule.setProperty("text-shadow", `${color} 0px 0px ${config.shadowExtent}`);
+      // let letterColor = basicColors[mutable colorIndex].replace(",1", ",.7");
+      // rule.setProperty("color", `${letterColor}`);
+      return color;
+    }
+  </script>
+  <script id="41" type="application/vnd.observable.javascript" hidden="">
+    delay = (millis) => {
+      if (millis < 0) millis = 0;
+      return new Promise(resolve => setTimeout(resolve, millis));
+    }
+
+  </script>
+  <script id="42" type="application/vnd.observable.javascript" hidden="">
+    spinTo = async (
+      nextLine,
+      resolveL2R = state.resolveL2R,
+      spinMs = config.showLine,
+      final = false
+    ) => {
+      let lineElems = Array.from(document.getElementById("line").children);
+      let keys = [...Array(lineElems.length).keys()];
+      let shuffled = resolveL2R ? keys : shuffle(keys);
+      for (let i = 0; i < lineElems.length; ++i) {
+        spinning[shuffled[i]] = true;
+        startSpinning(shuffled[i]);
+        await delay(config.showLetter + 20);
+      }
+      // this is the amount of time they will spin for:
+      await delay(spinMs);
+      // shuffled = resolveL2R ? keys : shuffled;
+      for (let i = 0; i < lineElems.length; ++i) {
+        spinning[shuffled[i]] = false;
+        let insertChar = getCharHTML(nextLine[shuffled[i]]);
+        getElemFrom(
+          lineElems[shuffled[i]].children,
+          "visible"
+        ).innerHTML = insertChar;
+        getElemFrom(
+          lineElems[shuffled[i]].children,
+          "invisible"
+        ).innerHTML = insertChar;
+        await delay(config.showLetter + 20);
+      }
+    }
+  </script>
+  <script id="43" type="application/vnd.observable.javascript" hidden="">
+    startSpinning = async (
+      elemIndex,
+      lineElems = Array.from(document.getElementById("line").children)
+    ) => {
+      let ochar = "";
+      while (spinning[elemIndex]) {
+        ochar = getElemFrom(lineElems[elemIndex].children, "visible").innerText;
+        if (ochar == " ") ochar = transThru[randInt(transThru.length)];
+        let aIndex = ALPHA_LOOP.indexOf(ochar);
+        let nchar = ALPHA_LOOP[++aIndex % ALPHA_LOOP.length];
+        getElemFrom(
+          lineElems[elemIndex].children,
+          "invisible"
+        ).innerHTML = getCharHTML(nchar);
+        await crossfader("text" + elemIndex);
+        await delay(config.xFade * (state.resolveL2R ? 1 : 2));
+      }
+    }
+  </script>
+  <script id="44" type="application/vnd.observable.javascript" hidden="">
+    stepThrough = async (j, dchar, lineElems) => {
+      let nchar = "";
+      for (let s = 0; s < maxSteps; s++) {
+        nchar = ""; // reset each time
+        let ochar = getElemFrom(lineElems[j].children, "visible").innerText;
+        nchar = await getNextChar(dchar, ochar, 0); // 0 = no stepsLeft must make change
+        if (nchar == "") return nchar; // shared space
+        if (nchar == null) {
+          // s = maxSteps;
+          return nchar; // reached destination
+        }
+        info(`j: ${j}, ochar: ${ochar}, nchar: ${nchar}, dchar: ${dchar}`);
+        getElemFrom(lineElems[j].children, "invisible").innerHTML = getCharHTML(
+          nchar
+        );
+        await crossfader("text" + j);
+        await delay(config.xFade);
+      } // end s loop maxSteps
+      await delay(config.showLetter);
+      return nchar;
+    }
+  </script>
+  <script id="45" type="application/vnd.observable.javascript" hidden="">
+    stepThroughMatches = async (matchingElemIndexes, destination, lineElems) => {
+      let nchar = "_";
+      for (let j = 0; j < matchingElemIndexes.length; j++) {
+        // step through at this j elemment position
+        nchar = await stepThrough(
+          matchingElemIndexes[j],
+          destination[matchingElemIndexes[j]],
+          lineElems
+        );
+        // if (nchar == "") break;
+      } // end j loop
+      delay(config.xFade * (maxSteps * 5)); // config.showLetter
+    }
+  </script>
+  <script id="46" type="application/vnd.observable.javascript" hidden="">
+    textMorph = async function (
+      destination,
+      line = document.getElementById("line"),
+      a = ALPHA_LOOP
+    ) {
+      // TODO: currently assumes lengths are equal
+      let extra = 0,
+        lineElems = line.children, // collection of two-member collections
+        lineLength = lineElems.length,
+        maxSteps = Math.ceil(a.length / 2),
+        nchar = "",
+        step = 1;
+      // info(a + " steps: " + maxSteps); // DEBUG
+      let stepsLeft = maxSteps;
+      // loop through maxSteps needed
+      for (let s = 0; s < maxSteps; s++) {
+        // loop over the string, which is: all "text [that is] visible"
+        stepsLeft--;
+        for (let i = 0; i < lineLength; i++) {
+          let ochar = getElemFrom(lineElems[i].children, "visible").innerText;
+          if (ochar == destination[i]) continue;
+          for (let j = i; j < lineLength; j++) {
+            if (ochar == getElemFrom(lineElems[j].children, "visible").innerText) {
+              nchar = await getNextChar(destination[j], ochar, stepsLeft);
+              if (nchar == "") break; // shared spaces
+              if (nchar == null) continue;
+              getElemFrom(
+                lineElems[j].children,
+                "invisible"
+              ).innerHTML = getCharHTML(nchar);
+            }
+          } // end j loop
+        } // end i loop over string
+        let current = currentlyVisible(lineElems);
+        if (destination != current) {
+          info(`not there ${++extra}\n${destination}\n${current}`);
+          await crossfader();
+          await delay(config.showLetter);
+        } else info(`got there ${++extra}`);
+      } // end s loop over maxSteps
+    }
+  </script>
+  <script id="47" type="application/vnd.observable.javascript" hidden="">
+    toNums = async (
+      line = document.getElementById("line"),
+      showAssembledNumsMs = 750 // config.showLetter
+    ) => {
+      let lineElems = line.children; // collection of two-member collections
+      let lineLength = lineElems.length;
+      let originalPhrase = "";
+      let invisiblePhrase = "";
+      for (const elem of lineElems) {
+        let v = getElemFrom(elem.children, "visible").innerText;
+        originalPhrase += v;
+        getElemFrom(elem.children, "invisible").innerHTML = getCharHTML(v);
+        // invisiblePhrase += getElemFrom(elem.children, "invisible").innerText;
+      }
+      // info(`DEBUG: ${invisiblePhrase}`, true);
+      for (let i = 0; i < lineLength; i++) {
+        // get current letter
+        let letter = getElemFrom(lineElems[i].children, "visible").innerText;
+        if (letter == " " || letter == "") continue;
+        if (numCodesStr.includes(letter)) continue; // already done this letter
+        let numStr;
+        if (letter == config.redactChar) {
+          spinning[i] = true;
+          startSpinning(i);
+          await delay(config.showLetter * 4 + 20); // L2R effect
+          continue;
+          // TESTING, WAS: numStr = " "; // was ∞ infinity
+        } else {
+          let nndx = ALPHA_LOOP.indexOf(letter);
+          numStr = ~nndx ? numCodesStr[nndx] : ""; // .substr(index, 1); // (nndx > -1)
+        }
+        if (numStr == "") continue;
+        // if not a space and still letter needs coding, go through the elements (spans) ...
+        for (let j = i; j < lineLength; j++) {
+          // ... and if an element's innerText matches our letter ...
+          if (getElemFrom(lineElems[j].children, "visible").innerText == letter) {
+            // ... replace it with a number code
+            getElemFrom(lineElems[j].children, "invisible").innerText = numStr;
+          } else continue;
+          await crossfader("text" + j, 0);
+        } // end j loop
+        // now show crossfade to the number code
+        await delay(config.showLetter * 4);
+      } // end i loop
+      let color = `${config.shadowRGB}`; // would change color each time: shadowColor();
+      await delay(showAssembledNumsMs);
+      //
+      // now put the letters back
+      let i = 0;
+      for (i = 0; i < lineLength; i++) {
+        // put original letters back into spinning elements
+        let visibleElem = getElemFrom(lineElems[i].children, "visible");
+        let invisibleElem = getElemFrom(lineElems[i].children, "invisible");
+        if (spinning[i]) {
+          spinning[i] = false; // prevent spinning overlap;
+          await delay(config.xFade * (state.resolveL2R ? 1 : 2) + 10);
+          invisibleElem.innerText = state.modelLine[i];
+          await crossfader("text" + i, 0);
+          continue;
+        }
+        let num = visibleElem.innerText;
+        // SPECIAL TEXT for infinity and the two digits used for Arabic:
+        if (num == " " || ALPHA_LOOP.includes(num)) continue;
+        for (let j = i; j < lineLength; ++j) {
+          let currentLetter = getElemFrom(lineElems[j].children, "visible")
+            .innerText;
+          if (currentLetter == " ") continue;
+          if (currentLetter == num) {
+            let originalLetter = getCharHTML(originalPhrase[j]);
+            if (originalLetter == config.redactChar) originalLetter = " "; // was ALPHA!
+            getElemFrom(
+              lineElems[j].children,
+              "invisible"
+            ).innerHTML = originalLetter;
+          } else continue;
+          await crossfader("text" + j, 0);
+        }
+        // if (i != lineLength - 1) {
+        await delay(config.showLetter * 4);
+        // }
+      }
+      // the following would fill up spaces:
+      // for (let i = 0; i < lineLength; i++) {
+      //   if (getElemFrom(lineElems[i].children, "visible").innerText == " ") {
+      //     await stepThrough(i, ALPHA_LOOP[randInt(ALPHA_LOOP.length)], lineElems);
+      //     // getElemFrom(lineElems[i].children, "visible").innerText =
+      //     //   ALPHA_LOOP[randInt(ALPHA_LOOP.length)];
+      //   }
+      // }
+      return color;
+    }
+  </script>
+  <script id="48" type="application/vnd.observable.javascript" hidden="">
+    toPhrase = async function (
+      destination,
+      line = document.getElementById("line"),
+      a = ALPHA_LOOP
+    ) {
+      let lineElems = line.children; // collection of two-member collections
+      let lineLength = lineElems.length;
+      let nchar = "";
+      // loop over the line
+      for (let i = 0; i < lineLength; i++) {
+        let ochar = getElemFrom(lineElems[i].children, "visible").innerText;
+        let matchingElems = [];
+        for (let j = i; j < lineLength; j++) {
+          if (ochar == getElemFrom(lineElems[j].children, "visible").innerText)
+            matchingElems.push(j);
+        }
+        nchar = await stepThroughMatches(matchingElems, destination, lineElems);
+        // for (let j = 0; j < matchingElems.length; j++) {
+        //   // step through at this j elemment position
+        //   nchar = await stepThrough(
+        //     matchingElems[j],
+        //     destination[matchingElems[j]],
+        //     lineElems
+        //   );
+        //   if (nchar == "") break;
+        // } // end j loop
+      } // end i loop over line
+    }
+  </script>
+  <script id="49" type="application/vnd.observable.javascript" hidden="">
+    toSpecials = async (s, time = config.showLetter) => {
+      let line = document.getElementById("line");
+      let lineElems = line.children; // collection of two-member collections
+      let lineLength = lineElems.length;
+      let originalPhrase = "";
+      let invisiblePhrase = "";
+      for (const elem of lineElems) {
+        let v = getElemFrom(elem.children, "visible").innerText;
+        originalPhrase += v;
+        getElemFrom(elem.children, "invisible").innerHTML = getCharHTML(v);
+        // invisiblePhrase += getElemFrom(elem.children, "invisible").innerText;
+      }
+      // info(`DEBUG: ${invisiblePhrase}`, true);
+      for (let i = 0; i < lineLength; i++) {
+        let letter = getElemFrom(lineElems[i].children, "visible").innerText;
+        if (letter == " " || letter == s) continue;
+        for (let j = i; j < lineLength; j++) {
+          if (letter == getElemFrom(lineElems[j].children, "invisible").innerText) {
+            getElemFrom(lineElems[j].children, "invisible").innerHTML = getCharHTML(
+              s
+            );
+            getElemFrom(lineElems[j].children, "visible").innerHTML = getCharHTML(
+              s
+            );
+          }
+        }
+        // now show crossfade to the special char
+        await crossfader();
+        await delay(time);
+      }
+      let color = `${config.shadowRGB}`; // would change color each time: shadowColor();
+      await delay(config.showLine);
+      for (let i = 0; i < lineLength; i++) {
+        let sletter = getElemFrom(lineElems[i].children, "visible").innerText;
+        if (sletter == " " || sletter != s) continue;
+        let letter = originalPhrase[i];
+        for (let j = i; j < lineLength; j++) {
+          if (letter == originalPhrase[j]) {
+            getElemFrom(lineElems[j].children, "invisible").innerHTML = getCharHTML(
+              originalPhrase[i]
+            );
+            getElemFrom(lineElems[j].children, "visible").innerHTML = getCharHTML(
+              originalPhrase[i]
+            );
+          }
+        }
+        await crossfader();
+        await delay(config.showLetter);
+      }
+      return color;
+    }
+  </script>
+  <script id="50" type="application/vnd.observable.javascript" hidden="">
+    uniqueLetters = arrOfLines => {
+      return new Set(arrOfLines.join("").replaceAll(" ", ""));
+    }
+  </script>
+  <script id="51" type="text/markdown" hidden="">
+    ### Imports
+  </script>
+  <script id="52" type="application/vnd.observable.javascript">
+    import { Button } from "@observablehq/inputs"
+  </script>
+  <script id="53" type="application/vnd.observable.javascript">
+    import { heads, mod, randElement, randInt, shuffle } from "@shadoof/utils"
+  </script>
+  <script id="54" type="text/html">
+    <!-- <h2>CSS</h3> -->
+    <style title="shadows">
+
+      #metrics {
+        font-family: 'Noto Sans Mono', 'Andale Mono', monospace;
+        font-weight: bold;
+        font-size: calc((96vw / 42) * 1.66); /* calc(96vw / 42 * (1em / 1ch)); */
+      }
+
+      #display {
+        color: #09348e;
+        position: relative;
+        min-height: 1.5em;
+        padding-top: .2em;
+      }
+
+      #line {
+        font-family: 'Noto Sans Mono', 'Andale Mono', monospace;
+        /* font-weight: bold; */
+        z-index: 1;
+        white-space: break-spaces;
+        margin: auto;
+        width: calc(100vw - 4vw);
+        font-size: calc((96vw / 42) * 1.66); /* calc((96vw / 42) * 1.6); */ /* 4vw; */
+        color: white; /* #09348e; */
+        position: relative;
+        background-color: rgb(45,45,45); /* whitesmoke */
+        min-height: 2.5em;
+        padding-top: 1em;
+      }
+
+      #line span {
+        position: absolute;
+        width: 1ch;
+        border: 1px dashed black;
+        /* border: 1px dashed red; */
+      }
+
+      #line span.redact {
+      	display: inline-block;
+        transform: scaleY(.8);
+      }
+
+      .text {
+        color: rgba(255,255,255,.85);
+        text-shadow: rgba(160,64,255,1) 0 0 .75ch; /* EDIT IF NEEDED */
+        transition: text-shadow 60ms ease-in-out, opacity 60ms ease-in-out;
+      }
+
+      .text.visible {
+        opacity: 1;
+        font-stretch: normal;
+        /* text-shadow: red 0 0 1.5ch; */
+        /* #09348e */
+      }
+
+      .text.invisible {
+        opacity: 0;
+        font-stretch: expanded;
+        /* text-shadow: #09348e 0 0 1.5ch; */
+      }
+
+      .text.visible:before {
+        position: absolute;
+        z-index: 1;
+        top: 5%; left: 5%;
+        width: 90%;
+        height: 90%;
+        background: linear-gradient(#eeeeff00, #eeeeff00, #eeeeff30, #eeeeff00);
+        content: '';
+        border: 1px solid #333;
+      }
+
+      .text.invisible:before {
+        position: absolute;
+        z-index: 1;
+        top: 5%; left: 5%;
+        width: 90%;
+        height: 90%;
+        background: linear-gradient(#ffeeee00, #ffeeee30, #ffeeee00, #ffeeee00);
+        content: '';
+        border: 1px solid #333;
+      }
+
+    </style>
+  </script>
+</notebook>
