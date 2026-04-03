@@ -3,14 +3,110 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@100..900&display=swap" rel="stylesheet">
     <style type="text/css">
       @import url("observable:styles/index.css");
-      html {
-        margin: 0;
-        padding: 0;
+      /* force no margin even in the html tag */
+      * {
+        margin-top:0 !important;
       }
+      /* change this for overall background color */
+      html {
+        background-color: white;
+        margin:0;
+        padding:2vw; /* change this to 0 to override default */
+        border:0;
+      }
+      /* and also this for body properties */
       body {
+        background-color: white;
         max-width: none;
+        margin:0;
+        padding:0;
+        border:0;
+      }
+      /* Caroline's friend Orange's CSS which they called 'shadows' */
+      #metrics {
+        font-family: 'Noto Sans Mono', 'Andale Mono', monospace;
+        font-weight: bold;
+        font-size: calc((96vw / 42) * 1.66); /* calc(96vw / 42 * (1em / 1ch)); */
+      }
+
+      #display {
+        color: #09348e;
+        position: relative;
+        min-height: 1.5em;
+        padding-top: .2em;
+      }
+
+      #line {
+        font-family: 'Noto Sans Mono', 'Andale Mono', monospace;
+        /* font-weight: bold; */
+        z-index: 1;
+        white-space: break-spaces;
+        margin: auto;
+        width: calc(100vw - 4vw);
+        font-size: calc((96vw / 42) * 1.66); /* calc((96vw / 42) * 1.6); */ /* 4vw; */
+        color: white; /* #09348e; */
+        position: relative;
+        background-color: rgb(45,45,45); /* whitesmoke */
+        min-height: 2.5em;
+        padding-top: 1em;
+      }
+
+      #line span {
+        position: absolute;
+        width: 1ch;
+        border: 1px dashed black;
+        /* border: 1px dashed red; */
+      }
+
+      #line span.redact {
+      	display: inline-block;
+        transform: scaleY(.8);
+      }
+
+      .text {
+        color: rgba(255,255,255,.85);
+        text-shadow: rgba(160,64,255,1) 0 0 .75ch; /* EDIT IF NEEDED */
+        transition: text-shadow 60ms ease-in-out, opacity 60ms ease-in-out;
+      }
+
+      .text.visible {
+        opacity: 1;
+        font-stretch: normal;
+        /* text-shadow: red 0 0 1.5ch; */
+        /* #09348e */
+      }
+
+      .text.invisible {
+        opacity: 0;
+        font-stretch: expanded;
+        /* text-shadow: #09348e 0 0 1.5ch; */
+      }
+
+      .text.visible:before {
+        position: absolute;
+        z-index: 1;
+        top: 5%; left: 5%;
+        width: 90%;
+        height: 90%;
+        background: linear-gradient(#eeeeff00, #eeeeff00, #eeeeff30, #eeeeff00);
+        content: '';
+        border: 1px solid #333;
+      }
+
+      .text.invisible:before {
+        position: absolute;
+        z-index: 1;
+        top: 5%; left: 5%;
+        width: 90%;
+        height: 90%;
+        background: linear-gradient(#ffeeee00, #ffeeee30, #ffeeee00, #ffeeee00);
+        content: '';
+        border: 1px solid #333;
       }
     </style>
   </head>

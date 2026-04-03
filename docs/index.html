@@ -1,18 +1,13 @@
 <!doctype html>
 <notebook theme="air">
-  <title>Untitled</title>
-  <script id="1" type="text/markdown" hidden="">
+  <title>Passengers</title>
+  <script id="0" type="text/markdown" hidden="">
     # Passengers
-
-    This is a test paragraph to see if markdown is rendering properly.
-
-    - List item 1
-    - List item 2
   </script>
-  <script id="2" type="application/vnd.observable.javascript">
+  <script id="1" type="application/vnd.observable.javascript">
     display = html`<div id="line">${lineLetters}</div>`;
   </script>
-  <script id="3" type="application/vnd.observable.javascript" hidden="">
+  <script id="2" type="application/vnd.observable.javascript" hidden="">
     morph = {
       // return "not running";
       let transformIndex = 0;
@@ -235,7 +230,7 @@
       console.log("Done");
     }
   </script>
-  <script id="4" type="text/markdown" hidden="">
+  <script id="3" type="text/markdown" hidden="">
     **Caroline**: Demo‘ing a redaction sequence which would normally start *after* lap `0` (after an initial, no-redaction lap). In the (grey area of the) cell below, change `1` to `0` and click the blue ‘play' button in order to see the non-redacted first lap. It is best, also, to refresh the notebook web page after clicking ‘play’. (‘Play’ = evaluate the current cell so as to register and use any new values.) Refresh is also the best way to start over.<br>
 
     For demo purposes, with `state.laps = 1` you will see a progressively redacted *shuffled* selection of ten lines from the collected data. (Note that if `state.laps = 0` the lines are *not* shuffled.) You’ll see two lines animated in each of five redaction ‘phases’, equally distributed over the selection of ten lines. These are:
@@ -249,10 +244,10 @@
 
     Clearly, you will be able to conceive of other principles for redaction and/or more phases and/or non-equal distribution of phrases across the sequences of lines. The choice is *yours*.
   </script>
-  <script id="5" type="text/markdown" hidden="">
+  <script id="4" type="text/markdown" hidden="">
     ### Variables
   </script>
-  <script id="6" type="application/vnd.observable.javascript" hidden="">
+  <script id="5" type="application/vnd.observable.javascript" hidden="">
     // times in milliseconds:
     config = ({
       background: "rgb(45,45,45)",
@@ -281,7 +276,7 @@
     })
     // specials CBBox:◻ ☐□�▮▯█⌧▉▋■∅␥ from Noto: ⎕ □ ▯ ⍁ ⌷ ❚
   </script>
-  <script id="7" type="application/vnd.observable.javascript" hidden="">
+  <script id="6" type="application/vnd.observable.javascript" hidden="">
     state = ({
       firstLine: 0,
       laps: 1,
@@ -290,7 +285,7 @@
       transform: "spinTo"
     })
   </script>
-  <script id="8" type="text/markdown" hidden="">
+  <script id="7" type="text/markdown" hidden="">
     ### TODO
     - ~~final redaction leaves one letter and one m-dash~~ √
     - ~~two-lap + toSpin cycle: first lap, no redaction; second lap, progressive, as agreed~~ √
@@ -305,7 +300,7 @@
     - ~~fix or alert orange to bug preventing the piece from looping properly~~: FIXED
     - ~~experiment with shuffled order for lines per lap~~ √
   </script>
-  <script id="9" type="application/vnd.observable.javascript" hidden="">
+  <script id="8" type="application/vnd.observable.javascript" hidden="">
     ALPHA_LOOP = {
       return " " + transThru;
     }
@@ -324,7 +319,7 @@
       // return al; // " P0A1S2E3N4G5R6W7V8I9Ja"
 
   </script>
-  <script id="10" type="application/vnd.observable.javascript" hidden="">
+  <script id="9" type="application/vnd.observable.javascript" hidden="">
     basicColors = [
       `rgba(128,128,255,${config.shadowOpacity})` // adjust
       // `rgba(255,0,0,${config.shadowOpacity})`, // red
@@ -348,7 +343,7 @@
     //   "purple"
     // ] // but not:   "black", "silver", "gray", "white", "olive", "aqua", "maroon",
   </script>
-  <script id="11" type="application/vnd.observable.javascript" hidden="">
+  <script id="10" type="application/vnd.observable.javascript" hidden="">
     csv = `ENGL_ROOT,P,A,S,S,E,N,G,E,R,S,,,W,E,,A,R,E,,,,,P,A,S,S,A,G,E,S,,,W,E,,A,R,E,,,
     GALICIAN,P,A,S,A,X,E,I,R,A,S,,,S,O,M,O,S,,,,,,S,O,M,O,S,,,,,,P,A,S,A,X,E,S,,
     PORTUGUESE,P,A,S,S,A,G,E,I,R,O,S,,S,O,M,O,S,,,,,,P,A,S,S,A,G,E,N,S,,S,O,M,O,S,,,,
@@ -369,14 +364,14 @@
     FLORA,P,O,L,L,I,N,A,T,E,D,,,P,O,L,L,I,N,A,T,I,N,G`
     // from Oct 24 spreadsheet version
   </script>
-  <script id="12" type="application/vnd.observable.javascript" hidden="">
+  <script id="11" type="application/vnd.observable.javascript" hidden="">
     mutable colorIndex = 0
   </script>
-  <script id="13" type="application/vnd.observable.javascript" hidden="">
+  <script id="12" type="application/vnd.observable.javascript" hidden="">
     // should be 0 initially; can be set to 1 for debugging redaction phases
     mutable laps = 1
   </script>
-  <script id="14" type="application/vnd.observable.javascript" hidden="">
+  <script id="13" type="application/vnd.observable.javascript" hidden="">
     // lineLettersReact = {
     //   let len = 0;
     //   lines.forEach((line) => (len = line.length > len ? line.length : len));
@@ -396,7 +391,7 @@
     //   return template;
     // }
   </script>
-  <script id="15" type="application/vnd.observable.javascript" hidden="">
+  <script id="14" type="application/vnd.observable.javascript" hidden="">
     lineLetters = (line = lines[0]) => {
       let len = 0;
       lines.forEach((line) => (len = line.length > len ? line.length : len));
@@ -416,31 +411,31 @@
       return template;
     }
   </script>
-  <script id="16" type="application/vnd.observable.javascript" hidden="">
+  <script id="15" type="application/vnd.observable.javascript" hidden="">
     lines = csvLines()
   </script>
-  <script id="17" type="text/markdown" hidden="">
+  <script id="16" type="text/markdown" hidden="">
     [ Match-related ]
   </script>
-  <script id="18" type="application/vnd.observable.javascript" hidden="">
+  <script id="17" type="application/vnd.observable.javascript" hidden="">
     allMatch = new RegExp("[" + transThru + "]", "g")
   </script>
-  <script id="19" type="application/vnd.observable.javascript" hidden="">
+  <script id="18" type="application/vnd.observable.javascript" hidden="">
     consonants = transThru.replaceAll(vowelsMatch, "")
   </script>
-  <script id="20" type="application/vnd.observable.javascript" hidden="">
+  <script id="19" type="application/vnd.observable.javascript" hidden="">
     consonantsMatch = new RegExp("[" + consonants + "]", "g")
   </script>
-  <script id="21" type="application/vnd.observable.javascript" hidden="">
+  <script id="20" type="application/vnd.observable.javascript" hidden="">
     vowels = "ɑeiouAEIOU⍺ɛ3ÉəXx"
   </script>
-  <script id="22" type="application/vnd.observable.javascript" hidden="">
+  <script id="21" type="application/vnd.observable.javascript" hidden="">
     vowelsMatch = new RegExp("[" + vowels + "]", "g")
   </script>
-  <script id="23" type="application/vnd.observable.javascript" hidden="">
+  <script id="22" type="application/vnd.observable.javascript" hidden="">
     maxSteps = Math.ceil(ALPHA_LOOP.length / 2)
   </script>
-  <script id="24" type="application/vnd.observable.javascript" hidden="">
+  <script id="23" type="application/vnd.observable.javascript" hidden="">
     numCodesStr = {
       let digits = "9453267018"; // 0123456789
       let s = "";
@@ -452,17 +447,17 @@
       return (" " + s).split("");
     } // "0123456789012345678901234567890123456789 " // or "94534680712 "
   </script>
-  <script id="25" type="application/vnd.observable.javascript" hidden="">
+  <script id="24" type="application/vnd.observable.javascript" hidden="">
     specials = "◻☐�▮▯█⌧▉▋"
   </script>
-  <script id="26" type="application/vnd.observable.javascript" hidden="">
+  <script id="25" type="application/vnd.observable.javascript" hidden="">
     spinning = {
       let a = new Array(csvLines(0)[0].length);
       a.fill(false);
       return a;
     }
   </script>
-  <script id="27" type="application/vnd.observable.javascript" hidden="">
+  <script id="26" type="application/vnd.observable.javascript" hidden="">
     transThru = {
       // uniqueLetters(lines)
       let unfiltered = Array.from(uniqueLetters(lines)).join("");
@@ -482,10 +477,10 @@
       // return shuffledtt;
     }
   </script>
-  <script id="28" type="text/markdown" hidden="">
+  <script id="27" type="text/markdown" hidden="">
     ### Functions
   </script>
-  <script id="29" type="application/vnd.observable.javascript" hidden="">
+  <script id="28" type="application/vnd.observable.javascript" hidden="">
     crossfader = async function (selector = "text", msDelay = config.xFade + 10) {
       // if only crossfading one letter this function must be passed an id containing a (serial) digit
       if (/\d/.test(selector)) {
@@ -520,7 +515,7 @@
       }
     }
   </script>
-  <script id="30" type="application/vnd.observable.javascript" hidden="">
+  <script id="29" type="application/vnd.observable.javascript" hidden="">
     csvLines = (data = csv) => {
       data = csv.split("\n");
       let lines = [];
@@ -554,7 +549,7 @@
       return lines;
     }
   </script>
-  <script id="31" type="application/vnd.observable.javascript" hidden="">
+  <script id="30" type="application/vnd.observable.javascript" hidden="">
     currentlyVisible = (elems) => {
       let s = "";
       for (const elem of elems) {
@@ -563,19 +558,19 @@
       return s;
     }
   </script>
-  <script id="32" type="application/vnd.observable.javascript" hidden="">
+  <script id="31" type="application/vnd.observable.javascript" hidden="">
     getCharHTML = (char) => (char == config.redactChar ? `${char}` : char)
     // could be used to add styling HTML to particular characters,
     // e.g. redactChar <span class="redact">${char}</span>
   </script>
-  <script id="33" type="application/vnd.observable.javascript" hidden="">
+  <script id="32" type="application/vnd.observable.javascript" hidden="">
     getElemFrom = (collection, visibility) => {
       return collection[0].classList.contains(visibility)
         ? collection[0]
         : collection[1];
     }
   </script>
-  <script id="34" type="application/vnd.observable.javascript" hidden="">
+  <script id="33" type="application/vnd.observable.javascript" hidden="">
     getNextChar = async (
       dchar,
       ochar,
@@ -623,12 +618,12 @@
       return nchar;
     }
   </script>
-  <script id="35" type="application/vnd.observable.javascript" hidden="">
+  <script id="34" type="application/vnd.observable.javascript" hidden="">
     info = (msg, showInfo = false) => {
       if (showInfo) console.log(`[INFO] ${msg}`);
     }
   </script>
-  <script id="36" type="application/vnd.observable.javascript" hidden="">
+  <script id="35" type="application/vnd.observable.javascript" hidden="">
     redact = (line, match, redactChar = config.redactChar) => {
       let redactables = Array.from(line.matchAll(match));
       if (redactables.length < 1) return line;
@@ -636,7 +631,7 @@
       return replaceAt(line, rmatch.index, redactChar);
     }
   </script>
-  <script id="37" type="application/vnd.observable.javascript" hidden="">
+  <script id="36" type="application/vnd.observable.javascript" hidden="">
     redactAll = (line, match, redactChar = config.redactChar) => {
       let redactables = Array.from(line.matchAll(match));
       if (redactables.length < 1) return line;
@@ -646,7 +641,7 @@
       return line;
     }
   </script>
-  <script id="38" type="application/vnd.observable.javascript" hidden="">
+  <script id="37" type="application/vnd.observable.javascript" hidden="">
     redactFinal = (line, match, redactChar = config.redactChar) => {
       let redactables = Array.from(line.matchAll(match));
       if (redactables.length < 1) return line;
@@ -666,12 +661,12 @@
       return line;
     }
   </script>
-  <script id="39" type="application/vnd.observable.javascript" hidden="">
+  <script id="38" type="application/vnd.observable.javascript" hidden="">
     replaceAt = (str, idx, rep) => {
       return str.substr(0, idx) + rep + str.substr(idx + 1);
     }
   </script>
-  <script id="40" type="application/vnd.observable.javascript" hidden="">
+  <script id="39" type="application/vnd.observable.javascript" hidden="">
     shadowColor = () => {
       let sheets = document.styleSheets;
       let sheet;
@@ -698,14 +693,14 @@
       return color;
     }
   </script>
-  <script id="41" type="application/vnd.observable.javascript" hidden="">
+  <script id="40" type="application/vnd.observable.javascript" hidden="">
     delay = (millis) => {
       if (millis < 0) millis = 0;
       return new Promise(resolve => setTimeout(resolve, millis));
     }
 
   </script>
-  <script id="42" type="application/vnd.observable.javascript" hidden="">
+  <script id="41" type="application/vnd.observable.javascript" hidden="">
     spinTo = async (
       nextLine,
       resolveL2R = state.resolveL2R,
@@ -738,7 +733,7 @@
       }
     }
   </script>
-  <script id="43" type="application/vnd.observable.javascript" hidden="">
+  <script id="42" type="application/vnd.observable.javascript" hidden="">
     startSpinning = async (
       elemIndex,
       lineElems = Array.from(document.getElementById("line").children)
@@ -758,7 +753,7 @@
       }
     }
   </script>
-  <script id="44" type="application/vnd.observable.javascript" hidden="">
+  <script id="43" type="application/vnd.observable.javascript" hidden="">
     stepThrough = async (j, dchar, lineElems) => {
       let nchar = "";
       for (let s = 0; s < maxSteps; s++) {
@@ -781,7 +776,7 @@
       return nchar;
     }
   </script>
-  <script id="45" type="application/vnd.observable.javascript" hidden="">
+  <script id="44" type="application/vnd.observable.javascript" hidden="">
     stepThroughMatches = async (matchingElemIndexes, destination, lineElems) => {
       let nchar = "_";
       for (let j = 0; j < matchingElemIndexes.length; j++) {
@@ -796,7 +791,7 @@
       delay(config.xFade * (maxSteps * 5)); // config.showLetter
     }
   </script>
-  <script id="46" type="application/vnd.observable.javascript" hidden="">
+  <script id="45" type="application/vnd.observable.javascript" hidden="">
     textMorph = async function (
       destination,
       line = document.getElementById("line"),
@@ -839,7 +834,7 @@
       } // end s loop over maxSteps
     }
   </script>
-  <script id="47" type="application/vnd.observable.javascript" hidden="">
+  <script id="46" type="application/vnd.observable.javascript" hidden="">
     toNums = async (
       line = document.getElementById("line"),
       showAssembledNumsMs = 750 // config.showLetter
@@ -932,7 +927,7 @@
       return color;
     }
   </script>
-  <script id="48" type="application/vnd.observable.javascript" hidden="">
+  <script id="47" type="application/vnd.observable.javascript" hidden="">
     toPhrase = async function (
       destination,
       line = document.getElementById("line"),
@@ -962,7 +957,7 @@
       } // end i loop over line
     }
   </script>
-  <script id="49" type="application/vnd.observable.javascript" hidden="">
+  <script id="48" type="application/vnd.observable.javascript" hidden="">
     toSpecials = async (s, time = config.showLetter) => {
       let line = document.getElementById("line");
       let lineElems = line.children; // collection of two-member collections
@@ -1015,105 +1010,35 @@
       return color;
     }
   </script>
-  <script id="50" type="application/vnd.observable.javascript" hidden="">
+  <script id="49" type="application/vnd.observable.javascript" hidden="">
     uniqueLetters = arrOfLines => {
       return new Set(arrOfLines.join("").replaceAll(" ", ""));
     }
   </script>
-  <script id="51" type="text/markdown" hidden="">
+  <script id="50" type="text/markdown" hidden="">
     ### Imports
   </script>
-  <script id="52" type="application/vnd.observable.javascript">
-    import { Button } from "@observablehq/inputs"
+  <script id="51" type="application/vnd.observable.javascript">
+    // import { heads, mod, randElement, randInt, shuffle } from "@shadoof/utils"
   </script>
-  <script id="53" type="application/vnd.observable.javascript">
-    import { heads, mod, randElement, randInt, shuffle } from "@shadoof/utils"
-  </script>
-  <script id="54" type="text/html">
-    <!-- <h2>CSS</h3> -->
-    <style title="shadows">
-
-      #metrics {
-        font-family: 'Noto Sans Mono', 'Andale Mono', monospace;
-        font-weight: bold;
-        font-size: calc((96vw / 42) * 1.66); /* calc(96vw / 42 * (1em / 1ch)); */
+  <script id="52" type="module">
+    const heads = () => {
+      return randInt(2) == 0;
+    }
+    // mod function that handles negative numbers, usage: mod(num, modulous)
+    const mod = (n, m) => ((n % m) + m) % m;
+    const randElement = (array) => array[randInt(array.length)];
+    const randInt = (maxPlusOne) => (maxPlusOne * Math.random()) | 0;
+    const shuffle = (a) => {
+      let i = a.length;
+      if (i < 2) return a;
+      while (--i > 0) {
+        let j = ~~(Math.random() * (i + 1)); // ~~ is a common optimization for Math.floor
+        let t = a[j];
+        a[j] = a[i];
+        a[i] = t;
       }
-
-      #display {
-        color: #09348e;
-        position: relative;
-        min-height: 1.5em;
-        padding-top: .2em;
-      }
-
-      #line {
-        font-family: 'Noto Sans Mono', 'Andale Mono', monospace;
-        /* font-weight: bold; */
-        z-index: 1;
-        white-space: break-spaces;
-        margin: auto;
-        width: calc(100vw - 4vw);
-        font-size: calc((96vw / 42) * 1.66); /* calc((96vw / 42) * 1.6); */ /* 4vw; */
-        color: white; /* #09348e; */
-        position: relative;
-        background-color: rgb(45,45,45); /* whitesmoke */
-        min-height: 2.5em;
-        padding-top: 1em;
-      }
-
-      #line span {
-        position: absolute;
-        width: 1ch;
-        border: 1px dashed black;
-        /* border: 1px dashed red; */
-      }
-
-      #line span.redact {
-      	display: inline-block;
-        transform: scaleY(.8);
-      }
-
-      .text {
-        color: rgba(255,255,255,.85);
-        text-shadow: rgba(160,64,255,1) 0 0 .75ch; /* EDIT IF NEEDED */
-        transition: text-shadow 60ms ease-in-out, opacity 60ms ease-in-out;
-      }
-
-      .text.visible {
-        opacity: 1;
-        font-stretch: normal;
-        /* text-shadow: red 0 0 1.5ch; */
-        /* #09348e */
-      }
-
-      .text.invisible {
-        opacity: 0;
-        font-stretch: expanded;
-        /* text-shadow: #09348e 0 0 1.5ch; */
-      }
-
-      .text.visible:before {
-        position: absolute;
-        z-index: 1;
-        top: 5%; left: 5%;
-        width: 90%;
-        height: 90%;
-        background: linear-gradient(#eeeeff00, #eeeeff00, #eeeeff30, #eeeeff00);
-        content: '';
-        border: 1px solid #333;
-      }
-
-      .text.invisible:before {
-        position: absolute;
-        z-index: 1;
-        top: 5%; left: 5%;
-        width: 90%;
-        height: 90%;
-        background: linear-gradient(#ffeeee00, #ffeeee30, #ffeeee00, #ffeeee00);
-        content: '';
-        border: 1px solid #333;
-      }
-
-    </style>
+      return a;
+    }
   </script>
 </notebook>
