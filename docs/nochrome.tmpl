@@ -14,32 +14,33 @@
       }
       /* change this for overall background color */
       html {
-        background-color: white;
+        background-color: rgb(30,30,30);
         margin:0;
         padding:2vw; /* change this to 0 to override default */
         border:0;
       }
       /* and also this for body properties */
       body {
-        background-color: white;
+        background-color: rgb(30,30,30);
         max-width: none;
         margin:0;
         padding:0;
         border:0;
       }
       /* Caroline's friend Orange's CSS which they called 'shadows' */
-      #metrics {
+
+      /* #metrics {
         font-family: 'Noto Sans Mono', 'Andale Mono', monospace;
         font-weight: bold;
-        font-size: calc((96vw / 42) * 1.66); /* calc(96vw / 42 * (1em / 1ch)); */
-      }
+        font-size: calc((96vw / 42) * 1.66);
+      } */
 
-      #display {
+      /* #display {
         color: #09348e;
         position: relative;
         min-height: 1.5em;
         padding-top: .2em;
-      }
+      } */
 
       #line {
         font-family: 'Noto Sans Mono', 'Andale Mono', monospace;
@@ -50,8 +51,9 @@
         width: calc(100vw - 4vw);
         font-size: calc((96vw / 42) * 1.66); /* calc((96vw / 42) * 1.6); */ /* 4vw; */
         color: white; /* #09348e; */
-        position: relative;
-        background-color: rgb(45,45,45); /* whitesmoke */
+        position: absolute;
+        top: 35%;
+        background-color: rgb(30,30,30);
         min-height: 2.5em;
         padding-top: 1em;
       }
@@ -59,7 +61,7 @@
       #line span {
         position: absolute;
         width: 1ch;
-        border: 1px dashed black;
+        /* border: 1px dashed black; */
         /* border: 1px dashed red; */
       }
 
