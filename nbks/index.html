@@ -32,6 +32,7 @@
         state.laps = cycle < 2 ? cycle : 0;
       }
       yield `setting off with cycle: ${cycle}, on lap: ${state.laps}, line: ${lineIdx}`;
+      document.getElementById("line").style.setProperty("--len", Math.max(...lines.map((l) => l.length)));
       document.getElementById("line").innerHTML = lineLetters("");
       await delay(5000);
       console.log(

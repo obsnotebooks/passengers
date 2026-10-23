@@ -5,16 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&family=Noto+Sans+Mono:wght@100..900&family=Source+Serif+4:ital,wght@0,200..900;1,200..900&family=Spline+Sans+Mono:ital,wght@0,300..700;1,300..700&display=swap" rel="stylesheet">
     <style type="text/css">
       @import url("observable:styles/index.css");
-      @import url("@fontsource-variable/inter/wght.css");
-      @import url("@fontsource-variable/inter/wght-italic.css");
-      @import url("@fontsource-variable/source-serif-4/wght.css");
-      @import url("@fontsource-variable/source-serif-4/wght-italic.css");
-      @import url("@fontsource-variable/spline-sans-mono/wght.css");
-      @import url("@fontsource-variable/spline-sans-mono/wght-italic.css");
-      @import url("observable:styles/index.css");
+      /* point the notebook kit's font variables at the network-loaded families */
+      :root {
+        --serif: "Source Serif 4", ui-serif, serif;
+        --sans-serif: "Inter", ui-sans-serif, sans-serif;
+        --monospace: "Spline Sans Mono", Menlo, Consolas, monospace;
+      }
       /* force no margin even in the html tag */
       * {
         margin-top:0 !important;
@@ -54,15 +53,18 @@
         /* font-weight: bold; */
         z-index: 1;
         white-space: break-spaces;
-        margin: auto;
-        width: calc(100vw - 4vw);
         font-size: calc((96vw / 42) * 1.66); /* calc((96vw / 42) * 1.6); */ /* 4vw; */
         color: white; /* #09348e; */
-        position: absolute;
-        top: 35%;
-        background-color: rgb(30,30,30);
-        min-height: 2.5em;
-        padding-top: 1em;
+        /* zero-height row whose top edge is the text baseline, centered in the viewport.
+           --len (longest line, in characters) is set from the notebook. */
+        position: fixed;
+        top: 50%;
+        left: 0;
+        right: 0;
+        height: 0;
+        width: calc(var(--len, 0) * 1ch);
+        margin-inline: auto;
+        transform: translateX(-1ch); /* glyphs start at left: 1ch */
       }
 
       #line span {
@@ -70,6 +72,18 @@
         width: 1ch;
         /* border: 1px dashed black; */
         /* border: 1px dashed red; */
+      }
+
+      /* trim only the bottom of each glyph box to the baseline, then lift it so the baseline sits on #line's top edge */
+      #line span.text {
+        text-box: trim-end text alphabetic;
+        transform: translateY(-100%);
+      }
+
+      /* keep the :before box at its original size: 90% of the untrimmed 1.5em line box */
+      #line span.text:before {
+        top: .075em;
+        height: 1.35em;
       }
 
       #line span.redact {
